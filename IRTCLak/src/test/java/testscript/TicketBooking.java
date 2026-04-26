@@ -45,7 +45,7 @@ public void chatgptTicketBooking() throws InterruptedException {
 
 	// Select Kochi
 	for (WebElement opt : optionsfrom) {
-		if (opt.getText().trim().equalsIgnoreCase("Kalpeni")) //// Kochi,Kavaratti,Beypore,Mangalore,Androth,Kalpeni,Agatti,Kalpeni,Bangaram,Minicoy,Amini,Kadmat,Kiltan,Chetlat,Bitra
+		if (opt.getText().trim().equalsIgnoreCase("Kochi")) //// Kochi,Kavaratti,Beypore,Mangalore,Androth,Kalpeni,Agatti,Kalpeni,Bangaram,Minicoy,Amini,Kadmat,Kiltan,Chetlat,Bitra
 		{
 			opt.click();
 			break;
@@ -59,7 +59,7 @@ public void chatgptTicketBooking() throws InterruptedException {
 
 	// Select Kochi
 	for (WebElement opt : optionsTo) {
-		if (opt.getText().trim().equalsIgnoreCase("Androth"))// Kochi,Kavaratti,Beypore,Mangalore,Androth,Kalpeni,Agatti,Kalpeni,Bangaram,Minicoy,Amini,Kadmat,Kiltan,Chetlat,Bitra
+		if (opt.getText().trim().equalsIgnoreCase("Minicoy"))// Kochi,Kavaratti,Beypore,Mangalore,Androth,Kalpeni,Agatti,Kalpeni,Bangaram,Minicoy,Amini,Kadmat,Kiltan,Chetlat,Bitra
 		{
 			opt.click();
 			break;
@@ -71,7 +71,7 @@ public void chatgptTicketBooking() throws InterruptedException {
 	datelabel.click();
 
 	List<WebElement> date = driver
-			.findElements(By.xpath("//div[@class='react-datepicker__day react-datepicker__day--028']"));
+			.findElements(By.xpath("//div[@class='react-datepicker__day react-datepicker__day--010 react-datepicker__day--weekend']"));
 	// date.click();
 	if (date.size() > 0) {
 		date.get(0).click();
@@ -79,11 +79,11 @@ public void chatgptTicketBooking() throws InterruptedException {
 		WebElement nextMonthbutton = driver.findElement(By.xpath("//button[@aria-label='Next Month']"));
 		nextMonthbutton.click();
 		WebElement datenextmonth = wait.until(ExpectedConditions.visibilityOfElementLocated(
-				By.xpath("//div[@class='react-datepicker__day react-datepicker__day--028']")));
+				By.xpath("//div[@class='react-datepicker__day react-datepicker__day--010 react-datepicker__day--weekend']")));
 		datenextmonth.click();
 	}
 
-	LocalTime targetTime = LocalTime.of(15, 00);
+	LocalTime targetTime = LocalTime.of(16, 00);
 
 	// ⏳ Wait EXACTLY till time
 	while (LocalTime.now().isBefore(targetTime)) {
@@ -141,7 +141,7 @@ public void chatgptTicketBooking() throws InterruptedException {
 	int passengerIndex = 0;
 
 	int attempt = 0;
-	int maxRetries = 8;
+	int maxRetries = 6;
 	boolean bookingSuccess = false;
 	boolean isProceedVisible = false;
 	Set<String> triedSeats = new HashSet<>();
@@ -250,22 +250,25 @@ public void chatgptTicketBooking() throws InterruptedException {
 
 					isProceedVisible = shortWait.until(
 							d -> d.findElements(By.xpath("//button[text()='Proceed' and @type='submit']")).size() > 0);
+					System.out.println("proceed button found");
+					System.out.println(isProceedVisible);
 				} catch (Exception e) {
 					isProceedVisible = false;
+					passengerIndex=0;
 				}
 
 				if (isProceedVisible) {
 					WebElement proceedbtn = driver
 							.findElement(By.xpath("//button[text()='Proceed' and @type='submit']"));
 					proceedbtn.click();
-					System.out.println("🎉 BOOKING SUCCESS");
+					System.out.println("🎉 BOOKING SUCCESS proceed button clicked");
 					bookingSuccess = true;
 					break;
 				}
 
 			}
 			if (isProceedVisible) {
-				System.out.println("🎉 BOOKING SUCCESS");
+				System.out.println("🎉 BOOKING SUCCESS while break");
 				bookingSuccess = true;
 				break;
 			}
@@ -274,7 +277,7 @@ public void chatgptTicketBooking() throws InterruptedException {
 			System.out.println("❌ Seat lost, retrying...");
 		}
 
-		// 🔁 Refresh and retry
+		// 🔁 Refresh and retfry
 		driver.navigate().refresh();
 
 		// 🔥 IMPORTANT: Wait after refresh again
@@ -285,6 +288,8 @@ public void chatgptTicketBooking() throws InterruptedException {
 		 */
 
 		attempt++;
+		passengerIndex=0;
+		
 
 		if (bookingSuccess) {
 			System.out.println("SUCCESS");
